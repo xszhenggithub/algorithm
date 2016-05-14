@@ -62,6 +62,10 @@ public:
 					if(pt==NULL) pc->next[i]->fail=root;
 					que.push(pc->next[i]);
 				}
+				//优化 匹配失败时 next[i]一定为空,可以利用起来
+				else{
+					pc->next[i]=(pc==root)?root:pc->fail->next[i];
+				}
 			}
 		}
 	}
@@ -70,19 +74,12 @@ public:
 	int search(string &s){
 		int match=0;
 		TrieNode* p=root;
+		
+		//优化后
 		for(auto ch:s){
 			int index=ch-'a';
-			if(p->next[index]==NULL){//不匹配
-				//根据fail指针进行跳转，寻找匹配前后缀
-				p=p->fail;
-				while(p && p->next[index]==NULL) p=p->fail;
-				if(p==NULL) p=root;
-			}
-			if(p->next[index]){//计数
-				p=p->next[index];
-				match+=p->count;
-			}
-
+			p=p->next[index];
+			match+=p->count;
 		}
 
 		return match;
@@ -102,8 +99,7 @@ int main(){
 	ac.buildACAutomation();
 	
 	cin>>str;
-	cout<<str<<endl;
-	cout<<ac.search(str);
+	cout<<ac.search(str)<<endl;
 
 	return 0;
 }
