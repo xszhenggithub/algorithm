@@ -1,0 +1,94 @@
+#include<iostream>
+#include<fstream>
+using namespace std;
+
+class Point{
+public:
+	Point(int x,int y):x(x),y(y){}
+	int x;
+	int y;
+};
+
+class Shape{
+public:
+	virtual void area(){}
+};
+
+class Circle:public Shape{
+public:
+	Circle(int x,int y,double r):p(x,y),radius(r){}
+private:
+	Point p;
+	double radius;
+	void area()
+	{
+		cout<<"the area of the circle is: "; 
+		cout<<radius*radius*3.14<<endl;
+	}
+};
+class Rec:public Shape{
+public:
+	Rec(int x1,int y1,int x2,int y2):p1(x1,y1),p2(x2,y2){}
+	void area()
+	{
+		cout<<"the area of the rectangle is: "; 
+		cout<<(p1.x-p2.x)*(p1.y-p2.y)<<endl;
+	}
+private:
+	Point p1,p2;
+};
+
+class Tri:public Shape{
+public:
+	Tri(int x1,int y1,int x2,int y2,int x3,int y3):p1(x1,y1),p2(x2,y2),p3(x3,y3){}
+	void area()
+	{
+		cout<<"the area of the triangle is: ";
+		cout<<(p1.x*p2.y+p1.y*p3.x+p2.x*p3.y-p1.x*p3.y-p1.y*p2.x-p2.y*p3.x)/2.0<<endl;
+	}
+private:
+	Point p1,p2,p3;
+};
+
+void fun(Shape *s)
+{
+	s->area();
+}
+int main()
+{
+    ifstream fin("e:\\1.txt");
+    Shape* shps[3];
+	char ch;
+	int x1,x2,x3,y1,y2,y3;
+	double r;
+	while(!fin.eof())
+	{
+		fin>>ch;
+		switch(ch)
+		{
+			case 'C':
+				{
+					fin>>ch>>x1>>ch>>y1>>ch>>r>>ch;
+					shps[0] = new Circle(x1,y1,r); //Ô² 
+					break;
+				}
+			case 'T':
+				{
+					fin>>ch>>x1>>ch>>y1>>ch>>x2>>ch>>y2>>ch>>x3>>ch>>y3>>ch;
+					shps[1] = new Tri(x1,y1,x2,y2,x3,y3); //Èý½ÇÐÎ 
+					break;
+				}
+			case 'R':
+				{
+					fin>>ch>>x1>>ch>>y1>>ch>>x2>>ch>>y2>>ch;
+					shps[2] = new Rec(x1,y1,x2,y2); //¾ØÐÎ 
+					break;
+				}
+		}
+	}
+	
+	for(int i=0;i<3;i++)
+	{
+		shps[i]->area();
+	}
+}

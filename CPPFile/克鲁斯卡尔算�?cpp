@@ -1,0 +1,91 @@
+/*克鲁斯卡尔算法——最小生成树 
+	应用贪心法生成最小生成树，每次选择权值最小的边，若加入已有的生成森林中不构成回路，则加入，否则不加入
+*/
+
+#include<iostream>
+using namespace std;
+
+struct ArcNode
+{
+	int vexs,vexe,weight;
+	bool selected;
+	bool in;
+};
+
+void assign(int a[],int length,int prevalue,int value)
+{//将编号为pervalue子树的各个节点并入编号为value的子树中，并更新子树编号 
+	for(int i=1;i<=length;i++)
+	{
+		if(a[i]==prevalue) a[i]=value;
+	}
+}
+
+int main()
+{
+	int vn,en;
+	ArcNode g[10];
+	int a[10];
+	
+	//建图
+	cin>>vn>>en;
+	for(int i=1;i<=en;i++)
+	{
+		cin>>g[i].vexs>>g[i].vexe>>g[i].weight;
+		g[i].selected=false;
+		g[i].in=false;
+	}
+	
+	//初始化循环 
+	g[0].selected=false;
+	g[0].weight=0x7fffffff;
+	for(int i=1;i<=vn;i++) a[i]=-1;
+	int gn=0;
+	
+	for(int i=1;i<vn;)//选择vn-1条边 
+	{
+		//寻找权值最小的边
+		int mini=0;
+		for(int j=1;j<=en;j++)
+		{
+			if(g[j].selected==false)
+			{
+				if(g[j].weight<g[mini].weight) mini=j;
+			}
+		}
+		
+		g[mini].selected=true;
+		if(a[g[mini].vexs]==-1 && a[g[mini].vexe]==-1 )//两个端点都不在任何一个分图中
+		{
+			i++;
+			gn++;
+			a[g[mini].vexs]=gn;
+			a[g[mini].vexe]=gn;
+			g[mini].in=true;
+		}
+		else if(a[g[mini].vexs]==-1 || a[g[mini].vexe]==-1)//一个端点在一个分图中,一个不在 
+		{
+			i++;
+			a[g[mini].vexe]=a[g[mini].vexs]=max(a[g[mini].vexe],a[g[mini].vexs]);
+			g[mini].in=true;
+		} 
+		else if(a[g[mini].vexs]!=a[g[mini].vexe])//两个都在，但在两个不同的分图中 
+		{
+			i++;
+			assign(a,vn,a[g[mini].vexs],a[g[mini].vexe]);
+			a[g[mini].vexe]=a[g[mini].vexs]=max(a[g[mini].vexe],a[g[mini].vexs]);
+			g[mini].in=true;
+		}
+		else//在同一个分图中
+		{
+			g[mini].in=false;//构成环，不取这条边
+		}
+	}
+	
+	for(int i=1;i<=en;i++)
+	{
+		cout<<g[i].vexs<<" "<<g[i].vexe<<" "<<g[i].weight<<" "<<g[i].in<<endl;
+	}
+	
+    return 0;
+}
+

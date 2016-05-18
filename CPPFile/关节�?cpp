@@ -1,0 +1,107 @@
+#include<iostream>
+using namespace std;
+
+#define MAXLEN 10 
+struct ArcNode
+{
+	int adjvex;
+	ArcNode* nextadj;
+};
+
+struct VexNode
+{
+	ArcNode* firstAdj;
+	int dfsNum;//深度优先遍历的序数 
+	int minAncestorDfsNum;//可以到达的最小祖先深度优先遍历序数
+	bool vis;
+};
+
+class Graph
+{
+	int vn;
+	VexNode g[MAXLEN];
+	int dfsnum;
+public:
+	Graph(int vexnum);
+	void insert(int s,int e);
+	void DFS(int vi);
+	void output();
+};
+
+int main()
+{
+	freopen("e:\\1.txt","r",stdin);
+	int vn,an,s,e;
+	cin>>vn>>an;
+	
+	Graph graph(vn);
+	
+	for(int i=0;i<an;i++)
+	{
+		cin>>s>>e;
+		graph.insert(s,e);
+	}
+	
+	graph.DFS(0);
+	
+	graph.output();
+	
+    return 0;
+}
+
+Graph::Graph(int vexnum)
+{
+	vn = vexnum;
+	dfsnum = 0;
+	for(int i=0;i<MAXLEN;i++)
+	{
+		g[i].firstAdj = NULL;
+		g[i].vis = false;
+	}
+}
+
+void Graph::insert(int s,int e)
+{
+	ArcNode* p = new ArcNode;
+	p->adjvex = e;
+	p->nextadj = g[s].firstAdj;
+	g[s].firstAdj = p;
+	/*
+	swap(s,e);//插入e到s的弧 
+	p = new ArcNode;
+	p->adjvex = e;
+	p->nextadj = g[s].firstAdj;
+	g[s].firstAdj = p;
+	*/
+}
+
+void Graph::DFS(int vi)
+{
+	g[vi].vis = true;
+	g[vi].dfsNum = dfsnum;
+	g[vi].minAncestorDfsNum = dfsnum;
+	
+	ArcNode* p = g[vi].firstAdj;
+	while(p)
+	{
+		if(g[p->adjvex].vis==false)//尚未遍历到 
+		{
+			g[p->adjvex].dfsNum=dfsnum++;
+			DFS(p->adjvex);
+			g[vi].minAncestorDfsNum = min(g[vi].minAncestorDfsNum,g[p->adjvex].minAncestorDfsNum);
+		}
+		else//已经深度优先遍历过了
+		{
+			g[vi].minAncestorDfsNum = min(g[vi].minAncestorDfsNum,g[p->adjvex].dfsNum);
+		}
+		
+		p = p->nextadj;
+	}
+}
+
+void Graph::output()
+{
+	for(int i=0;i<vn;i++) cout<<g[i].dfsNum<<" ";cout<<endl;
+	for(int i=0;i<vn;i++) cout<<g[i].minAncestorDfsNum<<" ";cout<<endl;
+}
+

@@ -1,0 +1,47 @@
+#include<iostream>
+#include<memory.h>
+using namespace std;
+
+int fact(int n)
+{//Çón! 
+	if(n<2) return 1;
+	int r=1;
+	for(int i=2;i<=n;i++) r*=i;
+	return r;
+}
+
+int main()
+{
+	int f[10];
+	bool a[10];
+	
+	for(int i=0;i<10;i++) f[i]=fact(i);
+
+	int n;
+	cin>>n;
+	for(int i=0;i<fact(n);i+=1)
+	{
+		int sum,l,k=i;
+		memset(a,0,sizeof(a));//
+		for(int j=n-1;j>=0;j--)
+		{
+			sum=0;
+			for(l=0;l<n;l++)
+			{
+				if(a[l]==false)//
+				{
+					if(sum==k/f[j])//
+					{
+						a[l]=true;
+						break;
+					}
+					sum++;//
+				}
+			}
+			cout<<char(65+l);
+			k=k%f[j];//
+		}
+		cout<<endl;
+	}
+	return 0;
+}

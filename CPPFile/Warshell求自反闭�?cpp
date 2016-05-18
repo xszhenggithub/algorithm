@@ -1,0 +1,49 @@
+#include<iostream>
+#include<memory.h> 
+using namespace std;
+
+int main()
+{
+	int n;
+	bool g[5][5];
+	int s,e;
+	
+	memset(g,0,sizeof(g));
+	
+	//图的输入 
+	cin>>n;
+	cin>>s>>e;
+	while(s!=0&&e!=0)
+	{
+		g[s][e]=g[e][s]=1;
+		cin>>s>>e;
+	}
+	
+	//warshell算法求闭包
+	for(int k=1;k<=n;k++)
+		for(int i=1;i<=n;i++)
+			for(int j=1;j<=n;j++)
+				g[i][j] = g[i][j] || (g[i][k] && g[k][j]);
+	
+	int gn=0;
+	bool in[10];
+	memset(in,0,sizeof(in));
+	
+	for(int i=1;i<=n;i++)
+	{
+		if(in[i]==false)
+		{
+			in[i]=true;
+			gn++;//分图个数增加
+			for(int j=i+1;j<=n;j++) //该分图的其他节点
+			{
+				if(g[i][j]) in[j]=true;
+			}
+		}
+	}
+	
+	cout<<gn<<endl;
+	
+    return 0;
+}
+
