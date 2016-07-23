@@ -2,7 +2,7 @@
 using namespace std;
 
 struct TrieNode{
-	int count;
+	int count;//计算以该字符之前的字符串为前缀的出现个数
 	TrieNode* next[26];
 
 	TrieNode(){
@@ -12,7 +12,7 @@ struct TrieNode{
 };
 
 class Trie{
-	TrieNode* root;
+	TrieNode* root;//根节点，不对应任何字符，仅作为前缀树入口
 public:
 	Trie(){
 		root=new TrieNode();
@@ -21,7 +21,7 @@ public:
 	void insert(string &str){
 		TrieNode* p=root;
 		for(auto ch:str){
-			if(p->next[ch-'a']==NULL){
+			if(p->next[ch-'a']==NULL){//对应节点不存在，则创建
 				p->next[ch-'a']=new TrieNode();
 			}
 			p=p->next[ch-'a'];
@@ -32,7 +32,7 @@ public:
 	int countPrefix(string &str){
 		TrieNode *p=root;
 		for(auto ch:str){
-			if(p->next[ch-'a']==NULL) return 0;
+			if(p->next[ch-'a']==NULL) return 0;//如果前缀过长，则返回0
 			p=p->next[ch-'a'];
 		}
 		return p->count;
